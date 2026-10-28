@@ -32,7 +32,7 @@ Use depois de concluir a instalação e configurar uma conta. Se os serviços j�
 
 ### INSTALAÇÃO COMPLETA
 
-Executa a sequência completa: verifica pré-requisitos, baixa ou restaura as fontes fixadas, compila o servidor, prepara o MySQL, extrai mapas e dados do cliente, configura servidor e bancos, configura o reino, instala addons e valida o perfil.
+Executa a sequência completa: detecta as dependências, informa e pede autorização para baixar/instalar cada componente ausente, valida o ambiente, baixa ou restaura as fontes fixadas, compila o servidor, prepara o MySQL, extrai mapas e dados do cliente, configura servidor e bancos, configura o reino, instala addons e valida o perfil.
 
 É destinada à primeira instalação ou à reconstrução do ambiente. Pode demorar bastante, especialmente na compilação e na geração de MMAPs. Mantenha o computador ligado até o resultado aparecer na aba **Logs**. A extração trabalha sobre uma cópia temporária dos dados e preserva os arquivos originais do cliente.
 
@@ -58,7 +58,7 @@ Abre no Explorador a pasta dos logs de inicialização do servidor, se ela exist
 
 ### VERIFICAR PRÉ-REQUISITOS
 
-Confere itens básicos para compilar e operar o servidor, como Windows, Git, CMake, MySQL, `mysqldump`, Boost, OpenSSL e ferramentas C++ do Visual Studio. Se houver pendências, elas aparecem na aba **Logs** e indicam o que precisa ser instalado ou configurado.
+Detecta Git, CMake, MySQL, Boost, OpenSSL e as ferramentas C++ do Visual Studio. Para cada dependência ausente, exibe um aviso, pede autorização, baixa o instalador e abre a instalação. No fim, verifica novamente todos os componentes. O botão e o fluxo de compilação são somente para Windows 10/11 x64.
 
 ### BAIXAR / ATUALIZAR FONTES
 

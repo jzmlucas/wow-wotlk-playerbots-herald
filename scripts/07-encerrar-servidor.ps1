@@ -8,7 +8,7 @@ Start-Sleep -Seconds 2
 $left = Get-ServerProcesses
 if ($left.Count) { $left | Select-Object ProcessId,Name,ExecutablePath | Format-Table -AutoSize; exit 1 }
 Write-Host 'Authserver e worldserver encerrados.' -ForegroundColor Green
-$mysqlAdmin = 'C:\Program Files\MySQL\MySQL Server 8.4\bin\mysqladmin.exe'
+$mysqlAdmin = Join-Path (Join-Path (Get-MySqlRoot) 'bin') 'mysqladmin.exe'
 $mysqlConfig = Get-KitPath 'servidor/mysql/root-client.ini'
 if ((Test-Path $mysqlAdmin) -and (Test-Path $mysqlConfig)) {
     & $mysqlAdmin "--defaults-extra-file=$mysqlConfig" --protocol=TCP --host=127.0.0.1 shutdown

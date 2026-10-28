@@ -12,7 +12,7 @@ scripts\02-compilar-servidor.ps1
 
 O repositório publica os SHAs em `config/fontes.lock.json`. O script clona o fork Playerbot e os módulos nessa revisão, aplica `patches/playerbots-herald.patch` ao `mod-playerbots` e salva o lock usado em `servidor/fontes.lock.json`. O patch inclui os comandos e estados do Herald, usa o New RPG como piloto e mantém o servidor remoto de comandos desativado. Reexecuções usam as mesmas revisões; não avançam branches automaticamente.
 
-Para executar o fluxo completo após instalar as dependências, use `scripts/instalar.ps1 -ClientPath 'C:\caminho\do\cliente'`. Ele compila, extrai os dados do cliente, configura MySQL e os bancos, aplica o perfil e instala os addons. A conta do jogo é criada manualmente no console depois; nenhuma senha de jogo é pedida nem salva pelo kit.
+Para executar o fluxo completo, use o launcher para detectar, baixar e instalar as dependências necessárias. A preparação solicita confirmação para cada componente ausente. Também é possível chamar `scripts/00-preparar-dependencias.ps1` diretamente em uma sessão interativa do Windows. Depois, use `scripts/instalar.ps1 -ClientPath 'C:\caminho\do\cliente'`; ele repete a verificação antes de compilar, extrair os dados do cliente, configurar MySQL e os bancos, aplicar o perfil e instalar os addons. A conta do jogo é criada manualmente no console depois; nenhuma senha de jogo é pedida nem salva pelo kit.
 
 Para pedir uma atualização de fontes, faça primeiro backup e encerre os servidores. Depois execute `scripts/08-atualizar-fontes.ps1 -RefreshPins`. O script tira e reaplica o patch Herald somente quando o checkout contém exatamente o patch publicado; alterações locais adicionais bloqueiam a atualização.
 

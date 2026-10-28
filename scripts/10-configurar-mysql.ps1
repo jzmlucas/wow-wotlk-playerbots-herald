@@ -1,5 +1,5 @@
 . "$PSScriptRoot\Common.ps1"
-$mysqlRoot = 'C:\Program Files\MySQL\MySQL Server 8.4'
+$mysqlRoot = Get-MySqlRoot
 $mysqld = Join-Path $mysqlRoot 'bin/mysqld.exe'
 $mysql = Join-Path $mysqlRoot 'bin/mysql.exe'
 if (-not (Test-Path $mysqld) -or -not (Test-Path $mysql)) { throw 'MySQL Server 8.4 não encontrado. Instale pelo guia de dependências.' }

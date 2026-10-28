@@ -54,7 +54,7 @@ public partial class MainWindow : Window
         ["start"] = new("Iniciar servidor", "scripts/06-iniciar-servidor.ps1"),
         ["backup"] = new("Criar backup", "scripts/07-backup.ps1"),
         ["install-all"] = new("Instalação completa", "scripts/instalar.ps1", true, "-ParallelJobs", "0"),
-        ["check"] = new("Verificar pré-requisitos", "scripts/00-verificar-pre-requisitos.ps1"),
+        ["check"] = new("Preparar dependências", "scripts/00-preparar-dependencias.ps1"),
         ["sources"] = new("Baixar / atualizar fontes", "scripts/01-baixar-fontes.ps1"),
         ["compile"] = new("Compilar servidor", "scripts/02-compilar-servidor.ps1"),
         ["extract"] = new("Extrair mapas e dados", "scripts/03-extrair-dados.ps1", true),

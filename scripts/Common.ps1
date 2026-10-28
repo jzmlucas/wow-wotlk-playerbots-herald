@@ -3,17 +3,38 @@ $ErrorActionPreference = 'Stop'
 
 $script:KitRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $script:ServerRoot = Join-Path $script:KitRoot 'servidor'
+$machinePath = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+$env:Path = (@($machinePath -split ';') + @($userPath -split ';') + @($env:Path -split ';') | Where-Object { $_ } | Select-Object -Unique) -join ';'
 $cmakeBin = 'C:\Program Files\CMake\bin'
-$mysqlBin = 'C:\Program Files\MySQL\MySQL Server 8.4\bin'
+$mysqlRootForPath = $env:SOLOREALM_MYSQL_ROOT
+if (-not $mysqlRootForPath) { $mysqlRootForPath = [Environment]::GetEnvironmentVariable('SOLOREALM_MYSQL_ROOT', 'User') }
+if (-not $mysqlRootForPath -or -not (Test-Path (Join-Path $mysqlRootForPath 'bin/mysqld.exe'))) { $mysqlRootForPath = Join-Path $script:ServerRoot 'tools/mysql-8.4.13-winx64' }
+if (-not (Test-Path (Join-Path $mysqlRootForPath 'bin/mysqld.exe'))) { $mysqlRootForPath = 'C:\Program Files\MySQL\MySQL Server 8.4' }
+$mysqlBin = Join-Path $mysqlRootForPath 'bin'
 foreach ($bin in @($cmakeBin,$mysqlBin)) {
     if ((Test-Path $bin) -and $env:PATH -notlike "*$bin*") { $env:PATH = "$bin;$env:PATH" }
 }
+
+function Get-MySqlRoot {
+    foreach ($candidate in @(
+        $env:SOLOREALM_MYSQL_ROOT,
+        [Environment]::GetEnvironmentVariable('SOLOREALM_MYSQL_ROOT', 'User'),
+        (Join-Path $script:ServerRoot 'tools/mysql-8.4.13-winx64'),
+        'C:\Program Files\MySQL\MySQL Server 8.4'
+    ) | Where-Object { $_ }) {
+        if (Test-Path (Join-Path $candidate 'bin/mysqld.exe')) { return $candidate }
+    }
+    return (Join-Path $script:ServerRoot 'tools/mysql-8.4.13-winx64')
+}
 if (-not $env:BOOST_ROOT) {
-    $localBoost = Join-Path $script:ServerRoot 'deps/boost_1_83_0'
-    if (Test-Path (Join-Path $localBoost 'boost/version.hpp')) { $env:BOOST_ROOT = $localBoost }
+    $boostCandidates = @([Environment]::GetEnvironmentVariable('BOOST_ROOT', 'User'), (Join-Path $script:ServerRoot 'deps/boost_1_83_0'), 'C:\local\boost_1_83_0', 'C:\Boost\boost_1_83_0')
+    foreach ($localBoost in $boostCandidates) {
+        if ($localBoost -and (Test-Path (Join-Path $localBoost 'boost/version.hpp'))) { $env:BOOST_ROOT = $localBoost; break }
+    }
 }
 if (-not $env:OPENSSL_ROOT_DIR) {
-    foreach ($candidate in @((Join-Path $script:ServerRoot 'tools/vcpkg/installed/x64-windows'),'C:\OpenSSL-Win64','C:\Program Files\OpenSSL-Win64')) {
+    foreach ($candidate in @([Environment]::GetEnvironmentVariable('OPENSSL_ROOT_DIR', 'User'), (Join-Path $script:ServerRoot 'tools/vcpkg/installed/x64-windows'),'C:\OpenSSL-Win64','C:\Program Files\OpenSSL-Win64','C:\Program Files\OpenSSL')) {
         if (Test-Path (Join-Path $candidate 'include/openssl/ssl.h')) { $env:OPENSSL_ROOT_DIR = $candidate; break }
     }
 }

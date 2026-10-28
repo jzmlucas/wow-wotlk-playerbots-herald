@@ -64,7 +64,7 @@ $run = Get-KitPath 'servidor/run'
 if (Get-ServerProcesses) { throw 'Encerre authserver/worldserver antes de copiar executáveis para servidor/run.' }
 New-Item -ItemType Directory -Force -Path $run | Out-Null
 Copy-Item (Join-Path $bin '*') $run -Recurse -Force
-$mysqlRoot = 'C:\Program Files\MySQL\MySQL Server 8.4'
+$mysqlRoot = Get-MySqlRoot
 $opensslRoot = $env:OPENSSL_ROOT_DIR
 foreach ($pair in @(
     @{source=(Join-Path $mysqlRoot 'lib/libmysql.dll');target='libmysql.dll'},

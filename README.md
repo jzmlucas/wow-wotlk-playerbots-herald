@@ -1,5 +1,7 @@
 # WoW WotLK 3.3.5a Self-Host com Playerbots e Herald
 
+> **Este repositório e seu launcher são somente para Windows 10/11 x64. Não há suporte para Linux ou macOS.**
+
 Guia para montar no Windows um reino PvE local de Wrath of the Lich King 3.3.5a, com Playerbots, MultiBot, Dungeon Clear e o addon Herald. O instalador baixa as fontes em revisões fixadas, compila o servidor, prepara os bancos e configura os addons.
 
 > **Você precisa obter o cliente do jogo separadamente.** Este repositório não fornece, hospeda nem baixa o World of Warcraft. Use uma cópia sua do cliente WotLK 3.3.5a build 12340. Antes de começar, confirme que a pasta do cliente contém `Wow.exe` e a pasta `Data`. O kit lê uma cópia temporária de `Data` para extrair os arquivos do servidor e preserva os arquivos originais do cliente.
@@ -8,10 +10,9 @@ Guia para montar no Windows um reino PvE local de Wrath of the Lich King 3.3.5a,
 
 - Windows 10 ou 11.
 - Cliente próprio WoW WotLK 3.3.5a, build 12340.
-- Git for Windows.
-- SDK .NET 9 para abrir o launcher gráfico a partir do código em um clone limpo.
-- Visual Studio Community 2022 com **Desenvolvimento para desktop com C++**.
-- CMake, MySQL 8.4 LTS, OpenSSL 3.x x64 e Boost 1.78–1.83.
+- Git for Windows e Windows Package Manager (`winget`) para baixar as dependências ausentes.
+- SDK .NET 9 para abrir o launcher gráfico a partir do código em um clone limpo; o launcher baixa e instala esse SDK para sua conta se necessário.
+- Visual Studio Community 2022 com **Desenvolvimento para desktop com C++**, CMake, MySQL 8.4 LTS, OpenSSL 3.x x64 e Boost 1.78–1.83. O launcher detecta o que falta, informa cada download e pede autorização antes de iniciar a instalação.
 - Espaço em disco e memória para compilar e gerar mapas, VMAPs e MMAPs. A extração de MMAPs pode levar bastante tempo.
 
 O guia completo para instalar e configurar as dependências está em [Preparar o Windows](docs/01-preparar-o-windows.md). Se tiver pouca memória ou CPU, siga o guia para reduzir a quantidade de bots antes de iniciar.
@@ -28,11 +29,7 @@ D:\Jogos\World of Warcraft
 
 O kit não altera os dados originais do cliente. Mais detalhes sobre dados e distribuição estão em [Downloads, dados e licenças](docs/05-downloads-e-licencas.md).
 
-### 2. Instale as dependências do Windows
-
-Instale os programas listados em [Preparar o Windows](docs/01-preparar-o-windows.md). Configure `BOOST_ROOT` para a pasta do Boost e `OPENSSL_ROOT_DIR` para a pasta do OpenSSL. O MySQL Client e o servidor precisam estar disponíveis no `PATH`.
-
-### 3. Baixe este kit
+### 2. Baixe este kit
 
 Clone ou baixe este repositório. Depois da extração, abra a pasta do projeto.
 
@@ -41,9 +38,9 @@ git clone https://github.com/jzmlucas/wow-wotlk-playerbots-herald.git
 cd wow-wotlk-playerbots-herald
 ```
 
-### 4. Execute o launcher gráfico
+### 3. Execute o launcher gráfico
 
-Dê dois cliques em `Abrir-SoloRealm.vbs`. Em um clone limpo, o launcher gráfico atual é compilado a partir do projeto incluído (requer o SDK .NET 9); depois selecione a pasta do cliente e clique em **Instalação completa**. O launcher mostra os registros e o progresso disponível dentro da própria interface, sem deixar uma janela de terminal aberta.
+Dê dois cliques em `Abrir-SoloRealm.vbs`. Se o SDK .NET 9 estiver ausente, o launcher informa que vai baixá-lo da Microsoft e pede autorização; a instalação fica restrita à conta atual do Windows. Em seguida, selecione a pasta do cliente e clique em **Instalação completa**. O launcher verifica as dependências, informa cada download e pede autorização para abrir a instalação antes de prosseguir. Visual Studio, CMake, MySQL, OpenSSL e Boost são obtidos de seus distribuidores; as instalações que exigem interface ou elevação mostram as telas próprias do Windows.
 
 O instalador verifica dependências e, em seguida:
 
@@ -57,7 +54,7 @@ O instalador verifica dependências e, em seguida:
 
 A primeira compilação e a extração de mapas podem demorar. Mantenha o computador ligado até o launcher informar que terminou. Se ocorrer um erro, consulte [Baixar fontes e compilar](docs/02-instalar-e-compilar.md) e a aba **Logs**. A documentação completa do launcher está em [Launcher gráfico SoloRealm](docs/07-launcher-grafico.md).
 
-### 5. Inicie o reino e crie sua conta
+### 4. Inicie o reino e crie sua conta
 
 Depois da instalação, use **Iniciar servidor** na aba **Início** do launcher.
 
@@ -69,7 +66,7 @@ No console do `worldserver`, crie uma conta normal:
 
 Substitua os exemplos por suas credenciais. Não use comandos para conceder nível de GM à conta de jogo.
 
-### 6. Aponte o cliente para o reino local
+### 5. Aponte o cliente para o reino local
 
 No cliente, faça uma cópia de segurança de `Data/<idioma>/realmlist.wtf` e configure o realmlist local:
 
@@ -97,10 +94,10 @@ A quantidade e proporção de bots são alvos de configuração; a população e
 
 ### Launcher SoloRealm
 
-Abra `Abrir-SoloRealm.vbs` para usar o **SoloRealm Control Center**. O script abre o executável gráfico compilado quando ele está presente; em um clone sem binários, compila e inicia o projeto `launcher/SoloRealm.Desktop` com o SDK .NET 9. Na primeira execução, selecione a pasta do cliente WotLK que contém `Wow.exe` e `Data`.
+Abra `Abrir-SoloRealm.vbs` para usar o **SoloRealm Control Center**. O script abre o executável gráfico compilado quando ele está presente; em um clone sem binários, instala o SDK .NET 9 para a conta atual (com confirmação) e compila/inicia o projeto `launcher/SoloRealm.Desktop`. Na primeira execução, selecione a pasta do cliente WotLK que contém `Wow.exe` e `Data`.
 
 - **Início** mostra o estado das portas locais do MySQL, authserver e worldserver. Também permite iniciar o reino, executar a instalação completa, abrir o cliente, consultar o procedimento de encerramento, criar backup e abrir os logs.
-- **Instalação e manutenção** reúne as etapas individuais: verificar dependências, baixar fontes, compilar, extrair mapas, configurar o servidor e o MySQL, atualizar bancos, configurar o reino, instalar addons, validar o perfil e encerrar o MySQL.
+- **Instalação e manutenção** reúne as etapas individuais: verificar e instalar dependências, baixar fontes, compilar, extrair mapas, configurar o servidor e o MySQL, atualizar bancos, configurar o reino, instalar addons, validar o perfil e encerrar o MySQL.
 - **Logs** mostra as mensagens da tarefa ativa e o estado de conclusão. Cada operação gera um arquivo em `launcher/logs`; quando não há percentual fornecido pelo script, a barra fica animada. Os consoles do `authserver` e `worldserver` são abertos separadamente e permanecem visíveis para acompanhar o servidor.
 
 Use **Instalação completa** para preparar o ambiente. Depois que terminar, use **Iniciar servidor**. Para fazer backup consistente, encerre primeiro os servidores; para desligá-los, execute `server shutdown 1` no console do worldserver, feche o authserver e só então use **Encerrar MySQL**.

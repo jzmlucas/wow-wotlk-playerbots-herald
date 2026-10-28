@@ -19,7 +19,7 @@ function Invoke-KitScript([string]$Name,[string[]]$Arguments=@()) {
     if (-not $scriptSucceeded) { throw "$Name falhou." }
 }
 
-Invoke-KitScript '00-verificar-pre-requisitos.ps1'
+Invoke-KitScript '00-preparar-dependencias.ps1'
 Invoke-KitScript '01-baixar-fontes.ps1'
 Invoke-KitScript -Name '02-compilar-servidor.ps1' -Arguments @('-ParallelJobs', [string]$ParallelJobs)
 Invoke-KitScript '10-configurar-mysql.ps1'

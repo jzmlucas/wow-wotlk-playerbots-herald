@@ -1,7 +1,7 @@
 . "$PSScriptRoot\Common.ps1"
 $clientIni = Get-KitPath 'servidor/mysql/acore-client.ini'
 $sqlFile = Get-KitPath 'sql/01-reino-local.sql'
-$mysql = 'C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe'
+$mysql = Join-Path (Join-Path (Get-MySqlRoot) 'bin') 'mysql.exe'
 foreach ($path in @($clientIni,$sqlFile,$mysql)) {
     if (-not (Test-Path -LiteralPath $path)) { throw "Arquivo necessário ausente: $path" }
 }
