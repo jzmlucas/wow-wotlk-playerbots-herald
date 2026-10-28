@@ -1,0 +1,63 @@
+{
+  "profileName": "WotLK local com Playerbots",
+  "expansion": "Wrath of the Lich King",
+  "clientBuild": "3.3.5a.12340",
+  "realm": {
+    "name": "Reino Local",
+    "type": "PVE",
+    "maxPlayerLevel": 80,
+    "bindIp": "127.0.0.1",
+    "realmAddress": "127.0.0.1",
+    "mapUpdateThreads": 6
+  },
+  "rates": {
+    "playerXp": 7,
+    "botXpMultiplier": 4,
+    "loot": 4,
+    "money": 10,
+    "questMoney": 10,
+    "reputation": 1,
+    "honor": 1
+  },
+  "gameplay": {
+    "creatureRespawnMinimumSeconds": 10,
+    "creatureHealthMultiplier": 1,
+    "creatureDamageMultiplier": 1,
+    "creatureAggroMultiplier": 1,
+    "creatureRespawnDynamicRate": 1,
+    "durabilityLossOnDeath": 10,
+    "instantFlightPaths": false
+  },
+  "bots": {
+    "minRandomBots": 1000,
+    "maxRandomBots": 1000,
+    "minLevel": 1,
+    "maxLevel": 80,
+    "maxAddedBots": 40,
+    "allianceRatio": 67,
+    "hordeRatio": 33,
+    "rpgChance": 0.5,
+    "disabledWithoutRealPlayer": false,
+    "autoEquipUpgradeLoot": true,
+    "joinLfg": true,
+    "talk": true,
+    "suggestDungeons": true,
+    "inviteHumanPlayers": false
+  },
+  "network": {
+    "localOnly": true,
+    "clientRealmlist": "set realmlist 127.0.0.1",
+    "openFirewallPorts": false
+  },
+  "paths": {
+    "serverRoot": "servidor",
+    "sourceRoot": "servidor/src",
+    "buildRoot": "servidor/build",
+    "runtimeRoot": "servidor/run",
+    "backupRoot": "servidor/backups"
+  },
+  "account": {
+    "inGameSecurity": "player",
+    "credentialPolicy": "never-store-in-kit"
+  }
+}

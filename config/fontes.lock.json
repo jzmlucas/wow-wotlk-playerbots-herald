@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "resolvedAt": "2026-10-24T06:25:51.1354619-03:00",
+  "repositories": [
+    {
+      "name": "azerothcore",
+      "role": "core",
+      "url": "https://github.com/mod-playerbots/azerothcore-wotlk.git",
+      "branch": "Playerbot",
+      "commit": "3f2969ddb0da42b48b4fca050c02b19163ba1e20",
+      "path": "servidor/src/azerothcore-wotlk"
+    },
+    {
+      "name": "mod-playerbots",
+      "role": "module",
+      "url": "https://github.com/mod-playerbots/mod-playerbots.git",
+      "branch": "master",
+      "commit": "e88cc4099e69f35126b28942a412ca702d20453b",
+      "path": "servidor/src/azerothcore-wotlk/modules/mod-playerbots"
+    },
+    {
+      "name": "mod-dungeon-clear",
+      "role": "module",
+      "url": "https://github.com/jrad7/mod-dungeon-clear.git",
+      "branch": "master",
+      "commit": "fcb680fb279cd25696e7f848fad72c5d41282032",
+      "path": "servidor/src/azerothcore-wotlk/modules/mod-dungeon-clear"
+    },
+    {
+      "name": "mod-multibot-bridge",
+      "role": "module",
+      "url": "https://github.com/Wishmaster117/mod-multibot-bridge.git",
+      "branch": "main",
+      "commit": "ebfa01a129dd4c441b2527e42dcc37b6da95e6c2",
+      "path": "servidor/src/azerothcore-wotlk/modules/mod-multibot-bridge"
+    },
+    {
+      "name": "MultiBot-Chatless",
+      "role": "client-addon",
+      "url": "https://github.com/Wishmaster117/MultiBot-Chatless.git",
+      "branch": "main",
+      "commit": "80148dff3f3a25a56d38dba0ecbd4f165b8c1d3f",
+      "path": "servidor/addons-src/MultiBot-Chatless"
+    },
+    {
+      "name": "mod-dungeon-clear-addon",
+      "role": "client-addon",
+      "url": "https://github.com/jrad7/mod-dungeon-clear-addon.git",
+      "branch": "master",
+      "commit": "997bfbd24614e3ad8500918eccd553cc843e425b",
+      "path": "servidor/addons-src/mod-dungeon-clear-addon"
+    },
+    {
+      "name": "AltBot",
+      "role": "client-addon",
+      "url": "https://github.com/errordnk/altbot.git",
+      "branch": "main",
+      "commit": "a03453f96571f0c76b1ae85c6f6fd2ab768f1043",
+      "path": "servidor/addons-src/AltBot"
+    }
+  ]
+}

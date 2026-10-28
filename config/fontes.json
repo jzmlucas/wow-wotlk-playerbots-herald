@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "note": "Os SHAs publicados em config/fontes.lock.json são usados na instalação. Atualizações são explícitas e geram um lock local em servidor/fontes.lock.json.",
+  "repositories": [
+    {
+      "name": "azerothcore",
+      "role": "core",
+      "url": "https://github.com/mod-playerbots/azerothcore-wotlk.git",
+      "branch": "Playerbot",
+      "path": "servidor/src/azerothcore-wotlk"
+    },
+    {
+      "name": "mod-playerbots",
+      "role": "module",
+      "url": "https://github.com/mod-playerbots/mod-playerbots.git",
+      "branch": "master",
+      "path": "servidor/src/azerothcore-wotlk/modules/mod-playerbots"
+    },
+    {
+      "name": "mod-dungeon-clear",
+      "role": "module",
+      "url": "https://github.com/jrad7/mod-dungeon-clear.git",
+      "branch": "master",
+      "path": "servidor/src/azerothcore-wotlk/modules/mod-dungeon-clear"
+    },
+    {
+      "name": "mod-multibot-bridge",
+      "role": "module",
+      "url": "https://github.com/Wishmaster117/mod-multibot-bridge.git",
+      "branch": "HEAD",
+      "path": "servidor/src/azerothcore-wotlk/modules/mod-multibot-bridge"
+    },
+    {
+      "name": "MultiBot-Chatless",
+      "role": "client-addon",
+      "url": "https://github.com/Wishmaster117/MultiBot-Chatless.git",
+      "branch": "HEAD",
+      "path": "servidor/addons-src/MultiBot-Chatless"
+    },
+    {
+      "name": "mod-dungeon-clear-addon",
+      "role": "client-addon",
+      "url": "https://github.com/jrad7/mod-dungeon-clear-addon.git",
+      "branch": "HEAD",
+      "path": "servidor/addons-src/mod-dungeon-clear-addon"
+    },
+    {
+      "name": "AltBot",
+      "role": "client-addon",
+      "url": "https://github.com/errordnk/altbot.git",
+      "branch": "main",
+      "path": "servidor/addons-src/AltBot"
+    }
+  ]
+}

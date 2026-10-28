@@ -1,0 +1,8 @@
+<Bindings>
+  <Binding name="SOLOREALMSHOP_TOGGLE" header="SOLOREALMADDONS">
+    SoloShopToggle()
+  </Binding>
+  <Binding name="SOLOREALMTELEPORT_TOGGLE" header="SOLOREALMADDONS">
+    SoloTeleportToggle()
+  </Binding>
+</Bindings>

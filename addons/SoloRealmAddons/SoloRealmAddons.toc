@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: Solo Realm Addons
+## Notes: Loja de Ouro, Teletransportes e Resetar Talentos no menu Esc.
+## Version: 1.2.0
+Bindings.xml
+ShopCatalog.lua
+SoloShop.lua
+SoloTeleport.lua
+SoloRealm.lua

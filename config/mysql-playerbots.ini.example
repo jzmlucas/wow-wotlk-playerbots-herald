@@ -1,0 +1,9 @@
+# Exemplo opcional baseado nas recomendações do guia do mod-playerbots.
+# Ajuste innodb_buffer_pool_size conforme a RAM física; referência do projeto:
+# aproximadamente metade da RAM. Faça cópia do my.ini existente antes de editar.
+[mysqld]
+skip-log-bin
+innodb_buffer_pool_size = 8G
+innodb_io_capacity = 500
+innodb_io_capacity_max = 2500
+transaction_isolation = READ-COMMITTED

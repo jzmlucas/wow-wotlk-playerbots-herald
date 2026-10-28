@@ -1,0 +1,6 @@
+## Interface: 30300
+## Title: Herald WotLK
+## Notes: Controles do autopilot de quests Herald para AzerothCore WotLK.
+## Version: 0.1.0
+Bindings.xml
+HeraldWotLK.lua

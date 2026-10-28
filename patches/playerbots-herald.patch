@@ -1,0 +1,226 @@
+diff --git a/conf/playerbots.conf.dist b/conf/playerbots.conf.dist
+index 5fa02b70..fdf4f0bb 100644
+--- a/conf/playerbots.conf.dist
++++ b/conf/playerbots.conf.dist
+@@ -2550,7 +2550,7 @@ PlayerbotsDatabase.SynchThreads     = 1
+ Playerbots.Updates.EnableDatabases = 1
+ 
+ # Command server port, 0 - disabled
+-Playerbots.CommandServerPort = 8888
++Playerbots.CommandServerPort = 0
+ 
+ #
+ #
+diff --git a/src/Ai/World/Rpg/Action/NewRpgAction.cpp b/src/Ai/World/Rpg/Action/NewRpgAction.cpp
+index 7589e4f7..40c36cf1 100644
+--- a/src/Ai/World/Rpg/Action/NewRpgAction.cpp
++++ b/src/Ai/World/Rpg/Action/NewRpgAction.cpp
+@@ -251,6 +251,9 @@ bool NewRpgStatusUpdateAction::Execute(Event /*event*/)
+     switch (status)
+     {
+         case RPG_IDLE:
++            if (botAI->GetHeraldAutopilotState() == HeraldAutopilotState::RUNNING)
++                return RandomChangeStatus({RPG_DO_QUEST, RPG_WANDER_NPC, RPG_GO_CAMP});
++
+             return RandomChangeStatus({RPG_GO_CAMP, RPG_GO_GRIND, RPG_WANDER_RANDOM, RPG_WANDER_NPC, RPG_DO_QUEST,
+                                        RPG_TRAVEL_FLIGHT, RPG_REST, RPG_OUTDOOR_PVP, RPG_DO_GATHER});
+ 
+diff --git a/src/Bot/Factory/AiFactory.cpp b/src/Bot/Factory/AiFactory.cpp
+index f9718aea..45876f39 100644
+--- a/src/Bot/Factory/AiFactory.cpp
++++ b/src/Bot/Factory/AiFactory.cpp
+@@ -670,6 +670,11 @@ void AiFactory::AddDefaultNonCombatStrategies(Player* player, PlayerbotAI* const
+             }
+         }
+     }
++    else if (IsSelfBot(player) && sPlayerbotAIConfig.EnableNewRpgStrategy && !player->InBattleground() &&
++             facade->GetHeraldAutopilotState() == HeraldAutopilotState::RUNNING)
++    {
++        nonCombatEngine->addStrategy("new rpg", false);
++    }
+     else
+         nonCombatEngine->ChangeStrategy(sPlayerbotAIConfig.NonCombatStrategies);
+ 
+diff --git a/src/Bot/PlayerbotAI.cpp b/src/Bot/PlayerbotAI.cpp
+index 7f51eca5..96b3a113 100644
+--- a/src/Bot/PlayerbotAI.cpp
++++ b/src/Bot/PlayerbotAI.cpp
+@@ -59,6 +59,7 @@
+ #include <mutex>
+ #include <sstream>
+ #include <string>
++#include <unordered_map>
+ 
+ namespace
+ {
+@@ -67,6 +68,7 @@ constexpr uint32 SPELL_DK_FROST_PRESENCE = 48263;
+ constexpr uint32 SPELL_GRAVITY_LAPSE_TK = 39432;
+ constexpr uint32 SPELL_GRAVITY_LAPSE_MGT = 44226;
+ constexpr uint32 VEHICLE_FLAG_FIXED_POSITION = 0x00200000;
++std::unordered_map<PlayerbotAI const*, HeraldAutopilotState> heraldAutopilotStates;
+ }
+ 
+ std::vector<std::string> PlayerbotAI::dispel_whitelist = {
+@@ -234,6 +236,8 @@ PlayerbotAI::PlayerbotAI(Player* bot)
+ 
+ PlayerbotAI::~PlayerbotAI()
+ {
++    heraldAutopilotStates.erase(this);
++
+     for (uint8 i = 0; i < BOT_STATE_MAX; i++)
+     {
+         if (engines[i])
+@@ -1992,6 +1996,30 @@ void PlayerbotAI::ResetStrategies(bool /*load*/)
+     //     PlayerbotRepository::instance().Load(this);
+ }
+ 
++void PlayerbotAI::SetHeraldAutopilotState(HeraldAutopilotState state)
++{
++    if (state == HeraldAutopilotState::DISABLED)
++        heraldAutopilotStates.erase(this);
++    else
++        heraldAutopilotStates[this] = state;
++    rpgInfo.ChangeToIdle();
++
++    if (state == HeraldAutopilotState::PAUSED || state == HeraldAutopilotState::DISABLED)
++    {
++        bot->StopMoving();
++        bot->GetMotionMaster()->Clear();
++        bot->GetMotionMaster()->MoveIdle();
++    }
++
++    ResetStrategies();
++}
++
++HeraldAutopilotState PlayerbotAI::GetHeraldAutopilotState() const
++{
++    auto const it = heraldAutopilotStates.find(this);
++    return it == heraldAutopilotStates.end() ? HeraldAutopilotState::DISABLED : it->second;
++}
++
+ bool PlayerbotAI::IsRanged(Player* player, bool bySpec)
+ {
+     PlayerbotAI* botAi = GET_PLAYERBOT_AI(player);
+diff --git a/src/Bot/PlayerbotAI.h b/src/Bot/PlayerbotAI.h
+index da22f6e7..4cd148ca 100644
+--- a/src/Bot/PlayerbotAI.h
++++ b/src/Bot/PlayerbotAI.h
+@@ -81,6 +81,13 @@ enum BotState
+     BOT_STATE_MAX
+ };
+ 
++enum class HeraldAutopilotState : uint8
++{
++    DISABLED,
++    RUNNING,
++    PAUSED
++};
++
+ bool IsRealPlayer(Player* player);
+ bool IsSelfBot(Player* player);
+ bool IsAlliance(uint8 race);
+@@ -436,6 +443,8 @@ public:
+     bool HasStrategy(std::string const name, BotState type);
+     BotState GetState() { return currentState; };
+     void ResetStrategies(bool load = false);
++    void SetHeraldAutopilotState(HeraldAutopilotState state);
++    HeraldAutopilotState GetHeraldAutopilotState() const;
+     void ReInitCurrentEngine();
+     void Reset(bool full = false);
+     void LeaveOrDisbandGroup();
+diff --git a/src/Bot/PlayerbotMgr.cpp b/src/Bot/PlayerbotMgr.cpp
+index 0d599cc9..6682c18b 100644
+--- a/src/Bot/PlayerbotMgr.cpp
++++ b/src/Bot/PlayerbotMgr.cpp
+@@ -1122,6 +1122,91 @@ std::vector<std::string> PlayerbotHolder::HandlePlayerbotCommand(char const* arg
+         return messages;
+     }
+ 
++    if (!strcmp(cmd, "herald"))
++    {
++        if (!charname)
++        {
++            messages.push_back("Usage: bot herald start/pause/resume/stop/status");
++            return messages;
++        }
++
++        bool const start = !strcmp(charname, "start") || !strcmp(charname, "resume");
++        if (start && !sPlayerbotAIConfig.EnableNewRpgStrategy)
++        {
++            messages.push_back("Herald requires Playerbots.EnableNewRpgStrategy = 1.");
++            return messages;
++        }
++
++        if (start && !GET_PLAYERBOT_AI(master))
++        {
++            if (sPlayerbotAIConfig.SelfBotLevel == 0 ||
++                (sPlayerbotAIConfig.SelfBotLevel == 1 && !master->CanBeGameMaster()))
++            {
++                messages.push_back("SelfBot is not allowed for this account.");
++                return messages;
++            }
++
++            PlayerbotsMgr::instance().AddPlayerbotData(master, true);
++            PlayerbotAI* botAI = GET_PLAYERBOT_AI(master);
++            if (!botAI)
++            {
++                messages.push_back("Could not initialize the SelfBot.");
++                return messages;
++            }
++
++            botAI->SetMaster(master);
++            PlayerbotRepository::instance().Load(botAI);
++        }
++
++        PlayerbotAI* botAI = GET_PLAYERBOT_AI(master);
++        if (!botAI)
++        {
++            messages.push_back("SelfBot is inactive. Use .bot herald start.");
++            return messages;
++        }
++
++        if (start)
++        {
++            botAI->SetHeraldAutopilotState(HeraldAutopilotState::RUNNING);
++            messages.push_back(
++                "Herald WotLK quest autopilot started. Use .bot herald pause or .bot herald stop to take control.");
++        }
++        else if (!strcmp(charname, "pause"))
++        {
++            botAI->SetHeraldAutopilotState(HeraldAutopilotState::PAUSED);
++            messages.push_back("Herald paused. Combat reactions may continue; use resume or stop.");
++        }
++        else if (!strcmp(charname, "stop"))
++        {
++            botAI->SetHeraldAutopilotState(HeraldAutopilotState::DISABLED);
++            delete botAI;
++            if (master->isTaxiCheater())
++                master->SetTaxiCheater(false);
++            messages.push_back("Herald stopped and SelfBot deactivated. Manual control returned.");
++        }
++        else if (!strcmp(charname, "status"))
++        {
++            switch (botAI->GetHeraldAutopilotState())
++            {
++                case HeraldAutopilotState::RUNNING:
++                    messages.push_back("Herald is running.");
++                    break;
++                case HeraldAutopilotState::PAUSED:
++                    messages.push_back("Herald is paused.");
++                    break;
++                default:
++                    messages.push_back("Herald autopilot is stopped; SelfBot remains active.");
++                    break;
++            }
++        }
++        else
++        {
++            messages.push_back("Usage: bot herald start/pause/resume/stop/status");
++        }
++
++        return messages;
++    }
++
+     if (!strcmp(cmd, "lookup"))
+     {
+         messages.push_back(LookupBots(master));

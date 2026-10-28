@@ -1,0 +1,24 @@
+# Generated server checkout, build products, client data, databases, logs and backups.
+# This directory can contain local credentials in AzerothCore .conf files.
+/servidor/
+/_extraidos/
+/build/
+/run/
+/client/
+/client-data/
+/Data/
+
+# Temporary extraction scratch space.
+# Local credentials and server data must never enter a public commit.
+*.dpapi
+root-client.ini
+acore-client.ini
+*.log
+*.dump
+*.sql.gz
+*.zip
+*.exe
+*.dll
+*.pdb
+/launcher/SoloRealm.Desktop/bin/
+/launcher/SoloRealm.Desktop/obj/
